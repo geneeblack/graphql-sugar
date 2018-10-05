@@ -43,16 +43,16 @@ module GraphQL
       column_details
     end
 
-    def self.get_graphql_type(model_class, column_name, enforce_non_null: true) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def self.get_graphql_type(model_class, column_name, enforce_non_null: false) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       return GraphQL::ID_TYPE.to_non_null_type if column_name == model_class.primary_key
 
       column_details = get_column_details(model_class, column_name)
 
       belongs_to_association = model_class.reflect_on_all_associations(:belongs_to).find { |a| a.foreign_key == column_name }
 
-      type = if model_class.defined_enums.key?(column_name)
-               GraphQL::STRING_TYPE
-             elsif belongs_to_association.present?
+      type = #if model_class.defined_enums.key?(column_name)
+             #  GraphQL::STRING_TYPE
+             if belongs_to_association.present?
                GraphQL::ID_TYPE
              else
                GRAPHQL_TYPE_MAPPING[column_details.type] || GraphQL::STRING_TYPE
@@ -76,13 +76,13 @@ module GraphQL
 
     def self.validates_presence?(model_class, column_name)
       column_validators = model_class.validators_on(column_name)
-      column_validators.any? do |validator|
-        validator.class == ActiveRecord::Validations::PresenceValidator &&
-          !validator.options[:allow_nil] &&
-          !validator.options[:allow_blank] &&
-          !validator.options.key?(:if) &&
-          !validator.options.key?(:unless)
-      end
+      #column_validators.any? do |validator|
+        #validator.class == ActiveRecord::Validations::PresenceValidator &&
+        #  !validator.options[:allow_nil] &&
+        #  !validator.options[:allow_blank] &&
+        #  !validator.options.key?(:if) &&
+        #  !validator.options.key?(:unless)
+      #end
     end
   end
 end

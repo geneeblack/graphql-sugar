@@ -20,6 +20,7 @@ module GraphQL
           kwargs[:function] ||= function_class.new
           kwargs[:resolve] ||= ->(obj, args, ctx) { function_class.new.call(obj, args, ctx) }
 
+          #binding.pry
           GraphQL::Define::AssignObjectField.call(type_defn, field_name, type_or_field, desc, **kwargs, &block)
         end
       end

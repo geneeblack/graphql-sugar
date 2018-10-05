@@ -5,7 +5,9 @@ module GraphQL
         def self.call(type_defn, field_name)
           model_class = Sugar.get_model_class(type_defn)
           association_name = Sugar.get_association_name(field_name)
-          association = model_class.reflect_on_association(association_name)
+          association = model_class.reflect_on_all_associations.select{|s| s.name == association_name.to_sym}.first
+
+          #binding.pry 
 
           if association.association_class == ActiveRecord::Associations::BelongsToAssociation
             define_belongs_to(type_defn, field_name, model_class, association_name, association)
@@ -27,7 +29,7 @@ module GraphQL
           key_column_details = Sugar.get_column_details(model_class, association.foreign_key)
           is_not_null = !key_column_details.null || Sugar.validates_presence?(model_class, association_name)
 
-          if is_not_null
+          if 1==0 #is_not_null
             key_type = key_type.to_non_null_type
             type = type.to_non_null_type
           end
